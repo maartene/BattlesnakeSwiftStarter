@@ -1,6 +1,6 @@
 # Battlesnake Swift Starter Project
 
-An unofficial Battlesnake template written in Swift. Get started at [play.battlesnake.com](https://play.battlesnake.com).
+An unofficial Battlesnake template written in Swift. Get started at [play.battlesnake.com](https://play.battlesnake.com). This is a port of the official JavaScript starter.
 
 ![Battlesnake Logo](https://media.battlesnake.com/social/StarterSnakeGitHubRepos_JavaScript.png)
 
