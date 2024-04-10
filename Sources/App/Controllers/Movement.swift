@@ -18,6 +18,8 @@ struct Coord {
     }
 }
 
+extension Coord: Content { }
+
 struct BattlesnakeMove {
     enum Move: String {
         case up
@@ -40,9 +42,13 @@ struct BattlesnakeObject {
     let body: [Coord]
 }
 
+extension BattlesnakeObject: Content { }
+
 struct BattlesnakeGameState {
     let you: BattlesnakeObject
 }
+
+extension BattlesnakeGameState: Content { }
 
 func move(_ gamestate: BattlesnakeGameState) -> BattlesnakeMove {
     var safeMoves: [BattlesnakeMove.Move] = [.up, .down, .left, .right]
