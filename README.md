@@ -45,6 +45,6 @@ battlesnake play -W 11 -H 11 --name 'Swift Starter Project' --url http://localho
 
 ## Next Steps
 
-Continue with the [Battlesnake Quickstart Guide](https://docs.battlesnake.com/quickstart) to customize and improve your Battlesnake's behavior.
+Continue with the [Battlesnake Quickstart Guide](https://docs.battlesnake.com/quickstart) to customize and improve your Battlesnake's behavior. You can find pointers to do so in `MoveTests.swift` (i.e. adopt TDD to get a smarter snake.). Implement the behaviour itself in `Movement.swift`
 
 **Note:** To play games on [play.battlesnake.com](https://play.battlesnake.com) you'll need to deploy your Battlesnake to a live web server OR use a port forwarding tool like [ngrok](https://ngrok.com/) to access your server locally.
