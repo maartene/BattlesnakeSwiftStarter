@@ -2,11 +2,11 @@ version: 2.1
 jobs:
   build:
     linux:
-      docker: 
+      docker:
         - image: swift
     steps:
       - checkout
-            - run: apt-get update
+      - run: apt-get update
       - run: apt-get install -yq libssl-dev
       - run: apt-get install -yq zlib1g-dev
       - run: swift build
