@@ -2,6 +2,7 @@
 import XCTVapor
 
 final class AppTests: XCTestCase {
+    // MARK: API tests
     func test_get_root_returns_default_BattlesnakeInfo() async throws {
         let app = Application(.testing)
         defer { app.shutdown() }
@@ -41,7 +42,11 @@ final class AppTests: XCTestCase {
         try await configure(app)
 
         try app.test(.POST, "move", beforeRequest: { req in
-            try req.content.encode(BattlesnakeGameState(you: BattlesnakeObject(body: [Coord(0,0), Coord(0,0)])))
+            try req.content.encode(BattlesnakeGameState(
+                game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: ""), map: "", timeout: 500, source: "league"),
+                turn: 0,
+                board: BattlesnakeBoard(height: 11, width: 11, food: [], hazards: [], snakes: [BattlesnakeObject(body: [Coord(0,0), Coord(0,0)])]),
+                you: BattlesnakeObject(body: [Coord(0,0), Coord(0,0)])))
         }, afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             
@@ -61,7 +66,7 @@ final class AppTests: XCTestCase {
         
         // Convert JSON to gamestate
         let decoder = JSONDecoder()
-        let data = exampleRequestJSON.data(using: .utf8)!
+        let data = exampleGameStateJSON.data(using: .utf8)!
         let gamestate = try decoder.decode(BattlesnakeGameState.self, from: data)
         
         
@@ -72,128 +77,93 @@ final class AppTests: XCTestCase {
         })
     }
     
-    func test_post_move_doesNotGoBackwards() async throws {
-        let app = Application(.testing)
-        defer { app.shutdown() }
-        try await configure(app)
+    // MARK: Decode requests
+    let decoder = JSONDecoder()
+    func test_decode_game() throws {        
+        let data = exampleGameJSON.data(using: .utf8)!
+        let game = try decoder.decode(BattlesnakeGame.self, from: data)
+
+        XCTAssertEqual(game.id, "totally-unique-game-id")
+        XCTAssertEqual(game.ruleset, BattlesnakeGame.Ruleset(name: "standard", version: "v1.2.3"))
+        XCTAssertEqual(game.map, "standard")
+        XCTAssertEqual(game.timeout, 500)
+        XCTAssertEqual(game.source, "league")
+    }
+
+    func test_decode_battlesnakeObject() throws {
+        let data = exampleBattlesnakeObjectJSON.data(using: .utf8)!
+        let snake = try decoder.decode(BattlesnakeObject.self, from: data)
+
+        XCTAssertEqual(snake.id, "totally-unique-snake-id")
+        XCTAssertEqual(snake.name, "Solid Snake")
+        XCTAssertEqual(snake.health, 54)
+        XCTAssertEqual(snake.body, [Coord(0,0), Coord(1,0), Coord(2,0)])
+        XCTAssertEqual(snake.latency, "123")
+        XCTAssertEqual(snake.head, Coord(0,0))
+        XCTAssertEqual(snake.length, 3)
+        XCTAssertEqual(snake.shout, "Snake? Snake!? SNAAKKE!!!!")
+        XCTAssertEqual(snake.squad, "1")
+        XCTAssertEqual(snake.customizations, BattlesnakeObject.Customizations(color: "#26CF04", head: "smile", tail: "bolt"))
+    }
+    
+    func test_decode_board() throws {
+        let data = exampleBattlesnakeBoardJSON.data(using: .utf8)!
+        let board = try decoder.decode(BattlesnakeBoard.self, from: data)
+
+        XCTAssertEqual(board.height, 11)
+        XCTAssertEqual(board.width, 11)
+        XCTAssertEqual(board.food, [Coord(5,5), Coord(9,0), Coord(2,6)])
+        XCTAssertEqual(board.hazards, [Coord(0,0), Coord(0,1), Coord(0,2)])
+        XCTAssertEqual(board.snakes.count, 2)
+    }
+    
+    func test_decode_gamestate() throws {
+        let data = exampleGameStateJSON.data(using: .utf8)!
+        let gamestate = try decoder.decode(BattlesnakeGameState.self, from: data)
         
-        let testcases: [(gamestate: BattlesnakeGameState, notAllowed: BattlesnakeMove.Move)] = [
-            (BattlesnakeGameState(you: BattlesnakeObject(body: [Coord(5,7), Coord(4,7)])), .left),
-            (BattlesnakeGameState(you: BattlesnakeObject(body: [Coord(5,7), Coord(6,7)])), .right),
-            (BattlesnakeGameState(you: BattlesnakeObject(body: [Coord(5,8), Coord(5,7)])), .down),
-            (BattlesnakeGameState(you: BattlesnakeObject(body: [Coord(5,6), Coord(5,7)])), .up)
-        ]
-
-        for testcase in testcases {
-            for _ in 0 ..< 10 {
-                try app.test(.POST, "move",
-                    beforeRequest: { req in
-                    try req.content.encode(testcase.gamestate)
-                    },
-                    afterResponse: { res in
-                        XCTAssertEqual(res.status, .ok)
-                                                
-                        let result = try res.content.decode(BattlesnakeMove.self)
-                    XCTAssertNotEqual(result.move, testcase.notAllowed)
-                    })
-            }
-        }
+        XCTAssertEqual(gamestate.game, BattlesnakeGame(
+            id: "totally-unique-game-id",
+            ruleset: BattlesnakeGame.Ruleset(name: "standard", version: "v1.1.15"),
+            map: "standard",
+            timeout: 500,
+            source: "league")
+        )
+        XCTAssertEqual(gamestate.turn, 14)
+        XCTAssertEqual(gamestate.board, BattlesnakeBoard(
+            height: 11,
+            width: 11,
+            food: [Coord(5, 5), Coord(9, 0), Coord(2, 6)],
+            hazards: [Coord(3, 2)],
+            snakes: [
+                BattlesnakeObject(
+                    id: "snake-508e96ac-94ad-11ea-bb37",
+                    name: "My Snake",
+                    health: 54,
+                    body: [Coord(0, 0), Coord(1, 0), Coord(2, 0)],
+                    latency: "111",
+                    shout: "why are we shouting??",
+                    customizations: BattlesnakeObject.Customizations(color: "#FF0000", head: "pixel", tail: "pixel")
+                ),
+                BattlesnakeObject(
+                    id: "snake-b67f4906-94ae-11ea-bb37",
+                    name: "Another Snake",
+                    health: 16,
+                    body: [Coord(5, 4), Coord(5, 3), Coord(6, 3), Coord(6, 2)],
+                    latency: "222",
+                    shout: "I'm not really sure...",
+                    customizations: BattlesnakeObject.Customizations(color: "#26CF04", head: "silly", tail: "curled")
+                )
+            ])
+        )
+        XCTAssertEqual(gamestate.you, BattlesnakeObject(
+            id: "snake-508e96ac-94ad-11ea-bb37",
+            name: "My Snake",
+            health: 54,
+            body: [Coord(0, 0), Coord(1, 0), Coord(2, 0)],
+            latency: "111",
+            shout: "why are we shouting??",
+            customizations: BattlesnakeObject.Customizations(color: "#FF0000", head: "pixel", tail: "pixel")
+        ))
+        
     }
 }
-
-
-// MARK: Fixtures
-
-let exampleRequestJSON =
-"""
-{
-  "game": {
-    "id": "totally-unique-game-id",
-    "ruleset": {
-      "name": "standard",
-      "version": "v1.1.15",
-      "settings": {
-        "foodSpawnChance": 15,
-        "minimumFood": 1,
-        "hazardDamagePerTurn": 14
-      }
-    },
-    "map": "standard",
-    "source": "league",
-    "timeout": 500
-  },
-  "turn": 14,
-  "board": {
-    "height": 11,
-    "width": 11,
-    "food": [
-      {"x": 5, "y": 5},
-      {"x": 9, "y": 0},
-      {"x": 2, "y": 6}
-    ],
-    "hazards": [
-      {"x": 3, "y": 2}
-    ],
-    "snakes": [
-      {
-        "id": "snake-508e96ac-94ad-11ea-bb37",
-        "name": "My Snake",
-        "health": 54,
-        "body": [
-          {"x": 0, "y": 0},
-          {"x": 1, "y": 0},
-          {"x": 2, "y": 0}
-        ],
-        "latency": "111",
-        "head": {"x": 0, "y": 0},
-        "length": 3,
-        "shout": "why are we shouting??",
-        "customizations":{
-          "color":"#FF0000",
-          "head":"pixel",
-          "tail":"pixel"
-        }
-      },
-      {
-        "id": "snake-b67f4906-94ae-11ea-bb37",
-        "name": "Another Snake",
-        "health": 16,
-        "body": [
-          {"x": 5, "y": 4},
-          {"x": 5, "y": 3},
-          {"x": 6, "y": 3},
-          {"x": 6, "y": 2}
-        ],
-        "latency": "222",
-        "head": {"x": 5, "y": 4},
-        "length": 4,
-        "shout": "I'm not really sure...",
-        "customizations":{
-          "color":"#26CF04",
-          "head":"silly",
-          "tail":"curled"
-        }
-      }
-    ]
-  },
-  "you": {
-    "id": "snake-508e96ac-94ad-11ea-bb37",
-    "name": "My Snake",
-    "health": 54,
-    "body": [
-      {"x": 0, "y": 0},
-      {"x": 1, "y": 0},
-      {"x": 2, "y": 0}
-    ],
-    "latency": "111",
-    "head": {"x": 0, "y": 0},
-    "length": 3,
-    "shout": "why are we shouting??",
-    "customizations": {
-      "color":"#FF0000",
-      "head":"pixel",
-      "tail":"pixel"
-    }
-  }
-}
-"""

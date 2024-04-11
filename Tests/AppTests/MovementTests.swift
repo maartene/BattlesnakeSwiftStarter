@@ -10,16 +10,31 @@ import XCTest
 @testable import App
 
 final class MovementTests: XCTestCase {
+    let movingRight = BattlesnakeGameState(
+        game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: ""), map: "", timeout: 500, source: "league"),
+        turn: 0,
+        board: BattlesnakeBoard(height: 11, width: 11, food: [], hazards: [], snakes: [BattlesnakeObject(body: [Coord(5,7), Coord(4,7)])]),
+        you: BattlesnakeObject(body: [Coord(5,7), Coord(4,7)]))
+    
+    let movingLeft = BattlesnakeGameState(
+        game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: ""), map: "", timeout: 500, source: "league"),
+        turn: 0,
+        board: BattlesnakeBoard(height: 11, width: 11, food: [], hazards: [], snakes: [BattlesnakeObject(body: [Coord(5,7), Coord(6,7)])]),
+        you: BattlesnakeObject(body: [Coord(5,7), Coord(6,7)]))
+    
+    let movingUp = BattlesnakeGameState(
+        game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: ""), map: "", timeout: 500, source: "league"),
+        turn: 0,
+        board: BattlesnakeBoard(height: 11, width: 11, food: [], hazards: [], snakes: [BattlesnakeObject(body: [Coord(5,8), Coord(5,7)])]),
+        you: BattlesnakeObject(body: [Coord(5,8), Coord(5,7)]))
+    
+    let movingDown = BattlesnakeGameState(
+        game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: ""), map: "", timeout: 500, source: "league"),
+        turn: 0,
+        board: BattlesnakeBoard(height: 11, width: 11, food: [], hazards: [], snakes: [BattlesnakeObject(body: [Coord(5,6), Coord(5,7)])]),
+        you: BattlesnakeObject(body: [Coord(5,6), Coord(5,7)]))
+    
     func test_move_doesNotGoBackwards() {
-        let movingRight = BattlesnakeGameState(
-            you: BattlesnakeObject(body: [Coord(5,7), Coord(4,7)]))
-        let movingLeft = BattlesnakeGameState(
-            you: BattlesnakeObject(body: [Coord(5,7), Coord(6,7)]))
-        let movingUp = BattlesnakeGameState(
-            you: BattlesnakeObject(body: [Coord(5,8), Coord(5,7)]))
-        let movingDown = BattlesnakeGameState(
-            you: BattlesnakeObject(body: [Coord(5,6), Coord(5,7)]))
-        
         for _ in 0 ..< 100 {
             XCTAssertNotEqual(move(movingRight).move, .left)
             XCTAssertNotEqual(move(movingLeft).move, .right)
