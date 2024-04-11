@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 
+/// MARK: Data structures
 struct Coord {
     let x: Int
     let y: Int
@@ -17,8 +18,6 @@ struct Coord {
         self.y = y
     }
 }
-
-extension Coord: Content { }
 
 struct BattlesnakeMove {
     enum Move: String {
@@ -31,25 +30,32 @@ struct BattlesnakeMove {
     let move: Move
 }
 
-extension BattlesnakeMove: Content { }
-
-extension BattlesnakeMove.Move: Content { }
-
-extension BattlesnakeMove.Move: Equatable { }
-
-
 struct BattlesnakeObject {
     let body: [Coord]
 }
-
-extension BattlesnakeObject: Content { }
 
 struct BattlesnakeGameState {
     let you: BattlesnakeObject
 }
 
+/// MARK: Protocol conformances
+extension Coord: Content { }
+
+extension BattlesnakeMove: Content { }
+
+extension BattlesnakeMove.Move: Content { }
+extension BattlesnakeMove.Move: Equatable { }
+
+extension BattlesnakeObject: Content { }
+
 extension BattlesnakeGameState: Content { }
 
+// MARK: Move function
+
+/// The actual function that calculates the next move of the snake.
+/// Hopefully, based on the actual game state. 
+/// - Parameter gamestate: all the information about the current game state.
+/// - Returns: a `BattlesnakeMove` object with the move the snake should make.
 func move(_ gamestate: BattlesnakeGameState) -> BattlesnakeMove {
     var safeMoves: [BattlesnakeMove.Move] = [.up, .down, .left, .right]
     

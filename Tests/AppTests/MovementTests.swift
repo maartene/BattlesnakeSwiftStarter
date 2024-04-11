@@ -1,5 +1,5 @@
 //
-//  MoveTests.swift
+//  MovementTests.swift
 //
 //
 //  Created by Maarten Engels on 10/04/2024.
@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 @testable import App
 
-final class MoveTests: XCTestCase {
+final class MovementTests: XCTestCase {
     func test_move_doesNotGoBackwards() {
         let movingRight = BattlesnakeGameState(
             you: BattlesnakeObject(body: [Coord(5,7), Coord(4,7)]))
