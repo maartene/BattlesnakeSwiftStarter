@@ -1,9 +1,8 @@
 version: 2.1
 jobs:
-  build:
-    linux:
-      docker:
-        - image: swift
+  linux:
+    docker:
+      - image: swift
     steps:
       - checkout
       - run: apt-get update
