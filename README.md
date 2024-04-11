@@ -3,9 +3,7 @@
 
 # Battlesnake Swift Starter Project
 
-An unofficial Battlesnake template written in Swift. Get started at [play.battlesnake.com](https://play.battlesnake.com). This is a port of the official JavaScript starter.
-
-![Battlesnake Logo](https://media.battlesnake.com/social/StarterSnakeGitHubRepos_JavaScript.png)
+An unofficial Battlesnake template written in Swift. Get started at [play.battlesnake.com](https://play.battlesnake.com). This is a port of the official JavaScript starter [Battlesnake Javascript Starter](https://github.com/BattlesnakeOfficial/starter-snake-javascript).
 
 This project is a great starting point for anyone wanting to program their first Battlesnake in Swift. It can be run locally or easily deployed to a cloud provider of your choosing. See the [Battlesnake API Docs](https://docs.battlesnake.com/api) for more detail.
 
@@ -65,4 +63,9 @@ Continue with the [Battlesnake Quickstart Guide](https://docs.battlesnake.com/qu
 
 ## Work-in-progress
 
-- Only the bare minimum of the JavaScript starter is implemented. Next steps will be to decode the entire gamestate for move requests. Now only your own snake is decoded.
+- Most of the gamestate is decoded. However, rulesets are not yet supported.
+
+## License
+
+- This project is licensed under the terms of the Apache 2.0 license.
+- This project is based on the official [Battlesnake Javascript Starter](https://github.com/BattlesnakeOfficial/starter-snake-javascript) (c) 2022 Battlesnake Inc.
