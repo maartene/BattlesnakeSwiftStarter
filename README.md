@@ -1,3 +1,6 @@
+![Swift 5.10](https://img.shields.io/badge/swift-5.10-orange.svg)
+![Vapor v4.0](https://img.shields.io/badge/vapor-4.0-blue) [![CircleCI](https://circleci.com/gh/maartene/BattlesnakeSwiftStarter.svg?style=shield)](https://circleci.com/gh/maartene/BattlesnakeSwiftStarter) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # Battlesnake Swift Starter Project
 
 An unofficial Battlesnake template written in Swift. Get started at [play.battlesnake.com](https://play.battlesnake.com). This is a port of the official JavaScript starter.
