@@ -22,7 +22,7 @@ This project uses [Vapor](https://vapor.codes/). It also comes with an optional 
 You should see the following output once it is running:
 
 ```sh
-Running Battlesnake at http://0.0.0.0:8000
+[ NOTICE ] Server starting on http://0.0.0.0:8000
 ```
 
 Open [localhost:8000](http://localhost:8000) in your browser and you should see
@@ -30,9 +30,10 @@ Open [localhost:8000](http://localhost:8000) in your browser and you should see
 ```json
 {
   "apiversion": "1",
-  "author": "",
-  "color": "#888888",
+  "version": "0.0.1-beta",
   "head": "default",
+  "author": "SwiftUser",
+  "color": "#888888",
   "tail": "default"
 }
 ```

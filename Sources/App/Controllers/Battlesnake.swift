@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Battlesnake.swift
 //  
 //
 //  Created by Maarten Engels on 10/04/2024.
