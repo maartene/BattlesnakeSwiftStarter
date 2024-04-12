@@ -2,6 +2,9 @@
 import XCTVapor
 
 final class AppTests: XCTestCase {
+    static let rulesetSettings = BattlesnakeGame.RulesetSettings(foodSpawnChance: 0, minimumFood: 0, hazardDamagePerTurn: 0, royale: 
+    BattlesnakeGame.RulesetSettings.Royale(shrinkEveryNTurns: 0), squad: BattlesnakeGame.RulesetSettings.Squad(allowBodyCollisions: true, sharedElimination: true, sharedHealth: true, sharedLength: true))
+
     // MARK: API tests
     func test_get_root_returns_default_BattlesnakeInfo() async throws {
         let app = Application(.testing)
@@ -43,7 +46,7 @@ final class AppTests: XCTestCase {
 
         try app.test(.POST, "move", beforeRequest: { req in
             try req.content.encode(BattlesnakeGameState(
-                game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: ""), map: "", timeout: 500, source: "league"),
+                game: BattlesnakeGame(id: "", ruleset: BattlesnakeGame.Ruleset(name: "", version: "", settings: Self.rulesetSettings), map: "", timeout: 500, source: "league"),
                 turn: 0,
                 board: BattlesnakeBoard(height: 11, width: 11, food: [], hazards: [], snakes: [BattlesnakeObject(body: [Coord(0,0), Coord(0,0)])]),
                 you: BattlesnakeObject(body: [Coord(0,0), Coord(0,0)])))
@@ -84,7 +87,9 @@ final class AppTests: XCTestCase {
         let game = try decoder.decode(BattlesnakeGame.self, from: data)
 
         XCTAssertEqual(game.id, "totally-unique-game-id")
-        XCTAssertEqual(game.ruleset, BattlesnakeGame.Ruleset(name: "standard", version: "v1.2.3"))
+        XCTAssertEqual(game.ruleset, BattlesnakeGame.Ruleset(name: "standard", version: "v1.2.3", 
+        settings: BattlesnakeGame.RulesetSettings(foodSpawnChance: 25, minimumFood: 1, hazardDamagePerTurn: 14, royale: BattlesnakeGame.RulesetSettings.Royale(shrinkEveryNTurns: 5), 
+            squad: BattlesnakeGame.RulesetSettings.Squad(allowBodyCollisions: true, sharedElimination: true, sharedHealth: true, sharedLength: true))))
         XCTAssertEqual(game.map, "standard")
         XCTAssertEqual(game.timeout, 500)
         XCTAssertEqual(game.source, "league")
@@ -123,7 +128,14 @@ final class AppTests: XCTestCase {
         
         XCTAssertEqual(gamestate.game, BattlesnakeGame(
             id: "totally-unique-game-id",
-            ruleset: BattlesnakeGame.Ruleset(name: "standard", version: "v1.1.15"),
+            ruleset: BattlesnakeGame.Ruleset(name: "standard", version: "v1.1.15", settings:
+                BattlesnakeGame.RulesetSettings(
+                    foodSpawnChance: 15,
+                    minimumFood: 1,
+                    hazardDamagePerTurn: 14,
+                    royale: nil,
+                    squad: nil
+                )),
             map: "standard",
             timeout: 500,
             source: "league")
@@ -165,5 +177,19 @@ final class AppTests: XCTestCase {
             customizations: BattlesnakeObject.Customizations(color: "#FF0000", head: "pixel", tail: "pixel")
         ))
         
+    }
+
+    func test_decode_RulesetSettings() throws {
+        let data = exampleRulesetSettingsJSON.data(using: .utf8)!
+        let rulesetSettings = try decoder.decode(BattlesnakeGame.RulesetSettings.self, from: data)
+
+        XCTAssertEqual(rulesetSettings.foodSpawnChance, 25)
+        XCTAssertEqual(rulesetSettings.minimumFood, 1)
+        XCTAssertEqual(rulesetSettings.hazardDamagePerTurn, 14)
+        XCTAssertEqual(rulesetSettings.royale?.shrinkEveryNTurns, 5)
+        XCTAssertEqual(rulesetSettings.squad?.allowBodyCollisions, true)
+        XCTAssertEqual(rulesetSettings.squad?.sharedElimination, true)
+        XCTAssertEqual(rulesetSettings.squad?.sharedHealth, true)
+        XCTAssertEqual(rulesetSettings.squad?.sharedLength, true)
     }
 }

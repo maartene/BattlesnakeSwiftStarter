@@ -98,7 +98,22 @@ let exampleGameJSON =
   "id": "totally-unique-game-id",
   "ruleset": {
     "name": "standard",
-    "version": "v1.2.3"
+    "version": "v1.2.3",
+    "settings":
+      {
+        "foodSpawnChance": 25,
+        "minimumFood": 1,
+        "hazardDamagePerTurn": 14,
+        "royale": {
+          "shrinkEveryNTurns": 5
+        },
+        "squad": {
+          "allowBodyCollisions": true,
+          "sharedElimination": true,
+          "sharedHealth": true,
+          "sharedLength": true
+        }
+    }
   },
   "map": "standard",
   "timeout": 500,
@@ -187,5 +202,23 @@ let exampleBattlesnakeBoardJSON =
   }
 }
   ]
+}
+"""
+
+let exampleRulesetSettingsJSON = 
+"""
+{
+  "foodSpawnChance": 25,
+  "minimumFood": 1,
+  "hazardDamagePerTurn": 14,
+  "royale": {
+    "shrinkEveryNTurns": 5
+  },
+  "squad": {
+    "allowBodyCollisions": true,
+    "sharedElimination": true,
+    "sharedHealth": true,
+    "sharedLength": true
+  }
 }
 """

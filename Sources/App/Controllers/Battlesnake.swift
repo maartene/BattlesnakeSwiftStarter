@@ -209,6 +209,47 @@ struct BattlesnakeGame {
     struct Ruleset {
         let name: String
         let version: String
+        let settings: RulesetSettings
+    }
+
+    /// Settings for the ruleset being used to run this game.
+    /// See: https://docs.battlesnake.com/api/objects/ruleset-settings
+    /// 
+    /// It contains the following properties:
+    /// - `foodSpawnChance`: An Int representing the chance that a new food item will spawn on the board each turn. Example: 15.
+    /// - `minimumFood`: An Int representing the minimum number of food items that will be present on the board at any given time. Example: 1.
+    /// - `hazardDamagePerTurn`: An Int representing the amount of damage that hazards will deal to a Battlesnake each turn. Example: 14.
+    /// - `royale`: An optional `Royale` value that contains settings specific to Royale games.
+    /// - `squad`: An optional `Squad` value that contains settings specific to Squad games.
+    /// In principe all properties are always sent, however as some of the example JSON do not include royale and squad, these are optional here.
+    struct RulesetSettings {
+        /// Settings specific to Royale games.
+        /// 
+        /// It contains the following properties:
+        /// - `shrinkEveryNTurns`: An Int representing - in Royale mode - the number of turns between generating new hazards (shrinking the safe board space).
+        struct Royale {
+            let shrinkEveryNTurns: Int
+        }
+
+        /// Settings specific to Squad games.
+        /// 
+        /// It contains the following properties:
+        /// - `allowBodyCollisions`: A Bool representing - in Squad mode - allow members of the same squad to move over each other without dying.
+        /// - `sharedElimination`: A Bool representing - in Squad mode - all squad members are eliminated when one is eliminated.
+        /// - `sharedHealth`: A Bool representing - in Squad mode - all squad members share health.
+        /// - `sharedLength`: A Bool representing - in Squad mode - all squad members share length.
+        struct Squad {
+            let allowBodyCollisions: Bool
+            let sharedElimination: Bool
+            let sharedHealth: Bool
+            let sharedLength: Bool
+        }
+
+        let foodSpawnChance: Int
+        let minimumFood: Int
+        let hazardDamagePerTurn: Int
+        let royale: Royale?
+        let squad: Squad?
     }
 
     let id: String
@@ -255,6 +296,15 @@ extension BattlesnakeObject: Equatable { }
 
 extension BattlesnakeGameState: Content { }
 
+extension BattlesnakeGame.RulesetSettings.Royale: Content { }
+extension BattlesnakeGame.RulesetSettings.Royale: Equatable { }
+
+extension BattlesnakeGame.RulesetSettings.Squad: Content { }
+extension BattlesnakeGame.RulesetSettings.Squad: Equatable { }
+
+extension BattlesnakeGame.RulesetSettings: Content { }
+extension BattlesnakeGame.RulesetSettings: Equatable { }
+
 extension BattlesnakeGame.Ruleset: Content { }
 extension BattlesnakeGame.Ruleset: Equatable { }
 
@@ -263,3 +313,5 @@ extension BattlesnakeGame: Equatable { }
 
 extension BattlesnakeBoard: Content { }
 extension BattlesnakeBoard: Equatable { }
+
+//extension BattlesnakeGame.
