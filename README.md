@@ -65,6 +65,7 @@ Continue with the [Battlesnake Quickstart Guide](https://docs.battlesnake.com/qu
 ## Work-in-progress
 
 - Most of the gamestate is decoded. However, rulesets are not yet supported.
+- `start` and `stop` don't decode the `BattlesnakeGameState` yet.
 
 ## License
 

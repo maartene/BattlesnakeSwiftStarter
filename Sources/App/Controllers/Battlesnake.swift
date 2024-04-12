@@ -9,6 +9,31 @@ import Foundation
 import Vapor
 
 // MARK: Data structures
+
+/// `BattlesnakeInfo` is a data structure that holds information about a Battlesnake.
+/// See: https://docs.battlesnake.com/api/webhooks
+///
+/// It contains the following properties:
+/// - `apiversion`: A string representing the API version used by the Battlesnake.
+/// - `author`: A string representing the author of this Battlesnake server.
+/// - `color`: A string representing the color of the Battlesnake in hexadecimal color code.
+/// - `head`: A string representing the type of head the Battlesnake has.
+/// - `tail`: A string representing the type of tail the Battlesnake has.
+/// - `version`: A string representing the version of the Battlesnake this battlesnake server.
+///
+/// There is also a static `default` property that provides a default `BattlesnakeInfo` instance.
+///
+/// Example usage:
+/// ```
+/// let mySnakeInfo = BattlesnakeInfo(
+///     apiversion: "1",
+///     author: "MyName",
+///     color: "#123456",
+///     head: "fang",
+///     tail: "bolt",
+///     version: "1.0.0"
+/// )
+/// ```
 struct BattlesnakeInfo {
     let apiversion: String
     let author: String
@@ -17,6 +42,7 @@ struct BattlesnakeInfo {
     let tail: String
     let version: String
     
+    /// A default `BattlesnakeInfo` instance.
     static var `default`: BattlesnakeInfo {
         BattlesnakeInfo(
             apiversion: "1",
@@ -29,17 +55,32 @@ struct BattlesnakeInfo {
     }
 }
 
+/// `Coord` is a data structure that holds the x and y coordinates of a point on the game board.
 struct Coord {
     let x: Int
     let y: Int
     
+    /// Initializes a new `Coord` instance with the given x and y coordinates.
+    /// - Parameters:
+    ///  x: The x coordinate of the point.
+    ///  y: The y coordinate of the point.
     init(_ x: Int, _ y: Int) {
         self.x = x
         self.y = y
     }
 }
 
+/// Represents a move that a battlesnake can make on the game board.
+///
+/// The `BattlesnakeMove` struct encapsulates the information about a move that a battlesnake can make on the game board. It includes the direction of the move, which can be one of four possible values: `.up`, `.down`, `.left`, or `.right`.
+///
+/// Example usage:
+/// ```
+/// let move = BattlesnakeMove(move: .up)
+/// ```
 struct BattlesnakeMove {
+
+    /// Represents the direction of the move.
     enum Move: String {
         case up
         case down
@@ -50,7 +91,45 @@ struct BattlesnakeMove {
     let move: Move
 }
 
+/// `BattlesnakeObject` is a data structure that represents a Battlesnake in the game.
+/// See: https://docs.battlesnake.com/api/objects/battlesnake
+///
+/// It contains the following properties:
+/// - `id`: A string representing the unique identifier for this Battlesnake in the context of the current Game.Example: "totally-unique-snake-id"
+/// - `name`: A string representing the name given to this Battlesnake by its author. Example: "Sneky McSnek Face"
+/// - `health`: An integer representing the current health value of this Battlesnake, between 0 and 100 inclusively. Example: 54
+/// - `body`: An array of `Coord` representing the coordinates of each segment of the Battlesnake's body. It is ordered from head to tail.
+/// - `latency`: A string representing the previous response time of this Battlesnake, in milliseconds. If the Battlesnake timed out and failed to respond, the game timeout will be returned (game.timeout)Example: "500"
+/// - `shout`: A string representing a message shouted by this Battlesnake on the previous turn. Example: "why are we shouting??"
+/// - `squad`: An optional string representing the squad that the Battlesnake belongs to. Used to identify squad members in Squad Mode games. Example: "1"
+/// - `customizations`: A `Customizations` struct representing the collection of customizations that control how this Battlesnake is displayed.
+///
+/// It also has computed properties:
+/// - `head`: A `Coord` representing the head of the Battlesnake. It is the first element of the `body` array.
+/// - `length`: The length of the snake (same as the number of items in the `body` array).
+///
+/// The `Customizations` nested struct represents the visual customizations of the Battlesnake. It includes:
+/// - `color`: A string representing the color of the Battlesnake in hexadecimal color code.
+/// - `head`: A string representing the type of head the Battlesnake has.
+/// - `tail`: A string representing the type of tail the Battlesnake has.
+///
+/// Example usage:
+/// ```
+/// let mySnake = BattlesnakeObject(
+///     id: "snake1",
+///     name: "MySnake",
+///     health: 100,
+///     body: [Coord(x: 0, y: 0), Coord(x: 1, y: 0)],
+///     latency: "123ms"
+/// )
+/// ```
 struct BattlesnakeObject {
+    /// Represents the visual customizations of the Battlesnake. It includes:
+    /// - `color`: A string representing the color of the Battlesnake in hexadecimal color code.
+    /// - `head`: A string representing the type of head the Battlesnake has.
+    /// - `tail`: A string representing the type of tail the Battlesnake has.
+    /// 
+    /// The `Customizations` struct has a static `default` property that provides a default `Customizations` instance.
     struct Customizations {
         let color: String
         let head: String
@@ -95,6 +174,14 @@ struct BattlesnakeObject {
     }
 }
 
+/// `BattlesnakeGameState` is a data structure that represents the state of the game at a given turn.
+/// See: https://docs.battlesnake.com/api/webhooks
+/// 
+/// It contains the following properties:
+/// - `game`: A `BattlesnakeGame` value that contains information about the game being played.
+/// - `turn`: An Int representing the current turn of the game.
+/// - `board`: A `BattlesnakeBoard` value that represents the game board.
+/// - `you`: A `BattlesnakeObject` value that represents the Battlesnake controlled by the player.
 struct BattlesnakeGameState {
     let game: BattlesnakeGame
     let turn: Int
@@ -102,7 +189,23 @@ struct BattlesnakeGameState {
     let you: BattlesnakeObject
 }
 
+/// `BattlesnakeGame` is a data structure that represents the game being played.
+/// See: https://docs.battlesnake.com/api/objects/game
+///
+/// It contains the following properties:
+/// - `id`: A string representing a unique identifier for this game. Example: "totally-unique-game-id".
+/// - `ruleset`: A Ruleset value that contains information about the ruleset being used to run this game. Example: Ruleset("name": "standard", "version": "v1.2.3").
+/// - `map`: A string identifying the name of the map being played on. Example: "standard"
+/// - `timeout`: An Int representing how much time your snake has (in ms) to respond to requests for this Game. Example: 500
+/// - `source`: A string representing the source of this game. One of: "tournament", "league" (for League Arenas), "arena" (for all other Arenas), "challenge", "custom" (for all other games sources). Example: "arena". The values for this field may change in the near future.
 struct BattlesnakeGame {
+
+    /// Information about the ruleset being used to run this game.
+    /// See: https://docs.battlesnake.com/api/objects/ruleset
+    /// 
+    /// It contains the following properties:
+    /// - `name`: A string representing the name of the ruleset. Example: "standard".
+    /// - `version`: A string representing the release version of the Rules module used in this game. Example: "version": "v1.2.3".
     struct Ruleset {
         let name: String
         let version: String
@@ -115,6 +218,15 @@ struct BattlesnakeGame {
     let source: String
 }
 
+/// `BattlesnakeBoard` is a data structure that represents the game board.
+/// See: https://docs.battlesnake.com/api/objects/board
+/// 
+/// It contains the following properties:
+/// - `height`: An integer representing the height of the game board. Example: 11
+/// - `width`: An integer representing the width of the game board. Example: 11
+/// - `food`: An array of `Coord` representing the coordinates of each food item on the board.
+/// - `hazards`: An array of `Coord` representing the coordinates of each hazard on the board.
+/// - `snakes`: An array of `BattlesnakeObject` representing the remaining snakes on the board.
 struct BattlesnakeBoard {
     let height: Int
     let width: Int
